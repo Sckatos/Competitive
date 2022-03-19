@@ -1,14 +1,54 @@
+/// Segment tree.
+///
+/// Apply function like sum, minimum, etc... on a sub-array and answer queries with O(log(n)) complexity.
+///
+/// Can be updated.
+/// # Example:
+/// ```
+/// let mut seg_tree = SegmentTree::from(&[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],|a, b| a + b);
+///  assert_eq!(seg_tree.query(0, 9), 55);
+///  seg_tree.update(0, 11);
+///  assert_eq!(seg_tree.query(0, 9), 65);
+/// ```
 pub struct SegmentTree<T> {
-    left_child: Option<Box<SegmentTree<T>>>,
-    right_child: Option<Box<SegmentTree<T>>>,
-    left: usize,
-    right: usize,
-    value: T,
+    node: Node<T>,
     func: fn(T, T) -> T
 }
 
 impl <T> SegmentTree<T> where T: Default + Copy {
     pub fn new(inputs: &[T], left: usize, right: usize, func: fn(T, T) -> T) -> Self {
+        Self {
+            node: Node::new(inputs, left, right, func),
+            func
+        }
+    }
+
+    pub fn from(inputs: &[T], func: fn(T, T) -> T) -> Self {
+        Self {
+            node: Node::from(inputs, func),
+            func
+        }
+    }
+
+    pub fn query(&self, left: usize, right: usize) -> T {
+        self.node.query(left, right, self.func).unwrap()
+    }
+
+    pub fn update(&mut self, index: usize, value: T) {
+       self.node.update(index, value, self.func);
+    }
+}
+
+struct Node<T> {
+    left_child: Option<Box<Node<T>>>,
+    right_child: Option<Box<Node<T>>>,
+    left: usize,
+    right: usize,
+    value: T
+}
+
+impl <T> Node<T> where T: Default + Copy {
+    fn new(inputs: &[T], left: usize, right: usize, func: fn(T, T) -> T) -> Self {
         if left == right {
             Self {
                 left,
@@ -16,12 +56,11 @@ impl <T> SegmentTree<T> where T: Default + Copy {
                 left_child: None,
                 right_child: None,
                 value: inputs[left],
-                func
             }
         } else {
             let middle = (left + right) / 2;
-            let left_child = Some(Box::new(SegmentTree::new(inputs, left, middle, func)));
-            let right_child = Some(Box::new(SegmentTree::new(inputs, middle + 1, right, func)));
+            let left_child = Some(Box::new(Node::new(inputs, left, middle, func)));
+            let right_child = Some(Box::new(Node::new(inputs, middle + 1, right, func)));
             let value = func(left_child.as_ref().unwrap().value, right_child.as_ref().unwrap().value);
 
             Self {
@@ -30,33 +69,28 @@ impl <T> SegmentTree<T> where T: Default + Copy {
                 left_child,
                 right_child,
                 value,
-                func
             }
         }
     }
 
-    pub fn from(inputs: &[T], func: fn(T, T) -> T) -> Self {
+    fn from(inputs: &[T], func: fn(T, T) -> T) -> Self {
         Self::new(inputs, 0, inputs.len() - 1, func)
     }
 
-    pub fn query(&self, left: usize, right: usize) -> T {
-        self._query(left, right).unwrap()
-    }
-
-    pub fn update(&mut self, index: usize, value: T) {
+    fn update(&mut self, index: usize, value: T, func: fn(T, T) -> T) {
         if self.left == self.right {
             self.value = value;
             return
         }
         if (self.left + self.right) / 2 >= index {
-            self.left_child.as_mut().unwrap().update(index, value);
+            self.left_child.as_mut().unwrap().update(index, value, func);
         } else {
-            self.right_child.as_mut().unwrap().update(index, value);
+            self.right_child.as_mut().unwrap().update(index, value, func);
         }
-        self.value = (self.func)(self.left_child.as_ref().unwrap().value, self.right_child.as_ref().unwrap().value)
+        self.value = func(self.left_child.as_ref().unwrap().value, self.right_child.as_ref().unwrap().value)
     }
 
-    fn _query(&self, left: usize, right: usize) -> Option<T> {
+    fn query(&self, left: usize, right: usize, func: fn(T, T) -> T) -> Option<T> {
         if self.left > right || self.right < left {
             return None;
         }
@@ -64,12 +98,12 @@ impl <T> SegmentTree<T> where T: Default + Copy {
             return Some(self.value);
         }
         let result = (
-            self.left_child.as_ref()?._query(left, right),
-            self.right_child.as_ref()?._query(left, right)
+            self.left_child.as_ref()?.query(left, right, func),
+            self.right_child.as_ref()?.query(left, right, func)
         );
         match result {
             (a, None) | (None, a)   => a,
-                      _             => Some((self.func)(result.0?, result.1?))
+                      _             => Some(func(result.0?, result.1?))
         }
     }
 }

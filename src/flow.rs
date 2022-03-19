@@ -1,28 +1,3 @@
-fn bfs(graph: &[Vec<i32>], s: usize, t: usize, parent: &mut [Option<usize>]) -> bool {
-    let n = graph.len();
-    let mut visited = vec![false; n];
-    let mut queue = std::collections::VecDeque::<usize>::new();
-
-    queue.push_front(s);
-    visited[s] = true;
-    parent[s] = None;
-    while !queue.is_empty() {
-        let u = queue.pop_back().unwrap();
-        for v in 0..n {
-            if !visited[v] && graph[u][v] > 0 {
-                parent[v] = Some(u);
-                if v == t {
-                    return true;
-                }
-                queue.push_front(v);
-                visited[v] = true;
-            }
-        }
-
-    }
-    false
-}
-
 /// Max Flow Ford Fulkerson
 ///
 /// Calculate the maximum flow in a flow network using BFS.
@@ -76,4 +51,29 @@ pub fn max_flow(graph: &[Vec<i32>], s: usize, t: usize) -> i32 {
         max_flow += path_flow;
     }
     max_flow
+}
+
+fn bfs(graph: &[Vec<i32>], s: usize, t: usize, parent: &mut [Option<usize>]) -> bool {
+    let n = graph.len();
+    let mut visited = vec![false; n];
+    let mut queue = std::collections::VecDeque::<usize>::new();
+
+    queue.push_front(s);
+    visited[s] = true;
+    parent[s] = None;
+    while !queue.is_empty() {
+        let u = queue.pop_back().unwrap();
+        for v in 0..n {
+            if !visited[v] && graph[u][v] > 0 {
+                parent[v] = Some(u);
+                if v == t {
+                    return true;
+                }
+                queue.push_front(v);
+                visited[v] = true;
+            }
+        }
+
+    }
+    false
 }

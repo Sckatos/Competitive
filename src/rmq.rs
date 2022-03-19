@@ -1,5 +1,16 @@
+/// Range minimum query.
+///
+/// Provides an efficient way of finding the minimal value in a sub-array and answer queries
+/// in a constant O(1) complexity.
+///
+/// It can also find the maximum, GCD and LCM in a sub-array.
+/// # Example:
+/// ```
+/// let rmq = Rmq::new(&[3, 1, 7, 2, 4, 3, 3],std::cmp::min);
+/// assert_eq!(rmq.query(0, 6), 1);
+/// ```
 pub struct Rmq<T> {
-    pub values: Vec<Vec<T>>,
+    values: Vec<Vec<T>>,
     func: fn(T, T) -> T
 }
 
@@ -25,6 +36,6 @@ impl <T> Rmq<T> where T: Default + Copy {
     }
 }
 
-pub fn log_n(n: usize) -> usize {
+fn log_n(n: usize) -> usize {
     std::mem::size_of::<usize>() * 8 - n.leading_zeros() as usize - 1
 }

@@ -2,12 +2,15 @@
 
 mod hungarian;
 mod flow;
+mod rmq;
+mod segment_tree;
 
 #[cfg(test)]
 mod tests {
     use crate::flow::max_flow;
     use crate::hungarian::hungarian;
-    use crate::palindrome;
+    use crate::rmq::Rmq;
+    use crate::segment_tree::SegmentTree;
 
     #[test]
     fn test_hungarian() {
@@ -27,5 +30,19 @@ mod tests {
             vec![ 0, 0, 0, 7, 0, 4 ],   vec![ 0, 0, 0, 0, 0, 0 ]
         ];
         assert_eq!(max_flow(&graph, 0, 5), 23);
+    }
+
+    #[test]
+    fn test_rmq() {
+        let rmq = Rmq::new(&[3, 1, 7, 2, 4, 3, 3],std::cmp::min);
+        assert_eq!(rmq.query(0, 6), 1)
+    }
+
+    #[test]
+    fn test_segment_tree() {
+        let mut seg_tree = SegmentTree::from(&[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], |a, b| a + b);
+        assert_eq!(seg_tree.query(0, 9), 55);
+        seg_tree.update(0, 11);
+        assert_eq!(seg_tree.query(0, 9), 65);
     }
 }
