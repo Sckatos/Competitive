@@ -1,2 +1,2 @@
 # Competitive
-Main template for competitive programming with some useful algorithms.
+Main template for competitive programming in Rust language with some useful algorithms.
