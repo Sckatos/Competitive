@@ -42,10 +42,8 @@ fn bound<T: Copy + PartialOrd>(v: &[T], value: T, f: fn(T, T) -> bool) -> Option
             low = mid + 1
         }
     }
-    if low == len { return None }
-    if low < len && f(v[low], value) {
+    while low < len && f(v[low], value) {
         low += 1;
-        println!("ok")
     }
     if low == len { return None }
 
@@ -67,6 +65,7 @@ impl <T: ToString + PartialOrd + Copy> VecOp<T> for Vec<T> {
 }
 
 fn main() {
+
 
 }
 
