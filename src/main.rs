@@ -6,7 +6,6 @@ fn line() -> String {
     let mut input = String::new();
     std::io::stdin().read_line(&mut input).expect("Error reading from stdin");
     input.trim().to_string()
-
 }
 
 fn val<T: FromStr>() -> T {
@@ -29,25 +28,19 @@ trait VecOp<T> {
     fn upper_bound(&self, value: T) -> Option<(usize, T)>;
 }
 
-fn bound<T: Copy + PartialOrd>(v: &[T], value: T, f: fn(T, T) -> bool) -> Option<(usize, T)> {
-    let mut low = 0usize;
-    let len = v.len();
-    let mut high = len;
+fn bound<T: Copy + PartialOrd>(vec: &[T], value: T, f: fn(T, T) -> bool) -> Option<(usize, T)> {
+    let mut left = 0usize;
+    let mut right = vec.len();
 
-    while low < high {
-        let mid = low + (high - low)/2;
-        if value <= v[mid] {
-            high = mid
+    while left < right {
+        let mid = (right + left) / 2;
+        if f(value, vec[mid]) {
+            right = mid
         } else {
-            low = mid + 1
+            left = mid + 1
         }
     }
-    while low < len && f(v[low], value) {
-        low += 1;
-    }
-    if low == len { return None }
-
-    Some((low, v[low]))
+    if left < vec.len() { Some((left, vec[left])) } else { None }
 }
 
 impl <T: ToString + PartialOrd + Copy> VecOp<T> for Vec<T> {
@@ -56,16 +49,21 @@ impl <T: ToString + PartialOrd + Copy> VecOp<T> for Vec<T> {
     }
 
     fn lower_bound(&self, value: T) -> Option<(usize, T)> {
-        bound(self, value, |a, b| a < b)
+        bound(self, value, |a, b| a <= b)
     }
 
     fn upper_bound(&self, value: T) -> Option<(usize, T)> {
-        bound(self, value, |a, b| a <= b)
+        bound(self, value, |a, b| a < b)
     }
 }
 
 fn main() {
+    let k = vec![1, 1, 2, 3, 4, 4, 5, 5, 8];
 
+    for i in 0..10 {
+        println!("{i} lower: {:?}", k.lower_bound(i));
+        println!("{i} upper: {:?}", k.upper_bound(i));
+    }
 
 }
 
