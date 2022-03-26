@@ -1,27 +1,18 @@
 #![allow(dead_code)]
-
 use std::str::FromStr;
+fn line() -> String { let mut s = String::new(); std::io::stdin().read_line(&mut s).expect("Error reading from stdin"); s.trim().to_string() }
+fn val<T: FromStr>() -> T { line().parse::<T>().ok().unwrap() }
+fn vec<T: FromStr>() -> Vec<T> { line().split_whitespace().map(|x| x.parse::<T>().ok().unwrap()).collect() }
+fn arr<T: FromStr, const N: usize>() -> [T; N] { vec().try_into().ok().unwrap() }
+trait Join { fn join_to_string(&self) -> String; }
+impl <T: ToString> Join for Vec<T> { fn join_to_string(&self) -> String { self.iter().map(T::to_string).collect::<Vec<_>>().join(" ") } }
 
-fn read_line() -> String {
-    let mut input: String = String::new();
-    std::io::stdin().read_line(&mut input).expect("Error reading from stdin");
-    input.trim().to_string()
-}
-
-fn read_val<T>() -> T where T: FromStr {
-    read_line().parse::<T>().ok().unwrap()
-}
-
-fn read_vec<T>() -> Vec<T> where T: FromStr {
-    read_line().split_whitespace().map(|x| x.parse::<T>().ok().unwrap()).collect()
-}
-
-fn read_arr<T, const N: usize>() -> [T; N] where T: FromStr {
-    read_vec().try_into().ok().unwrap()
-}
 
 fn main() {
-
+   let k = vec![1, 2, 3];
+    println!("{}", k.join_to_string());
 }
 
+fn solve() {
 
+}
