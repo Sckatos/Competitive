@@ -3,14 +3,14 @@
 mod hungarian;
 mod flow;
 mod rmq;
-mod segment_tree;
+mod segment_tree_nodes;
 
 #[cfg(test)]
 mod tests {
     use crate::flow::max_flow;
     use crate::hungarian::hungarian;
     use crate::rmq::Rmq;
-    use crate::segment_tree::SegmentTree;
+    use crate::segment_tree_nodes::SegmentTree;
 
     #[test]
     fn test_hungarian() {

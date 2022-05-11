@@ -62,10 +62,9 @@ pub fn hungarian(cost: &[Vec<i64>]) -> i64 {
             j0 = j1;
             if p[j0] == 0 { break; }
         }
-        loop {
+        while j0 != 0 {
             p[j0] = p[way[j0]];
             j0 = way[j0];
-            if j0 == 0 { break; }
         }
     }
     -v[0]

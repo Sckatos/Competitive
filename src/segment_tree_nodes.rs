@@ -5,7 +5,7 @@
 /// Can be updated.
 /// # Example:
 /// ```
-/// let mut seg_tree = SegmentTree::from(&[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],|a, b| a + b);
+/// let mut seg_tree = SegmentTree::from(&[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], |a, b| a + b);
 ///  assert_eq!(seg_tree.query(0, 9), 55);
 ///  seg_tree.update(0, 11);
 ///  assert_eq!(seg_tree.query(0, 9), 65);
