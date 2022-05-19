@@ -3,14 +3,16 @@
 mod hungarian;
 mod flow;
 mod rmq;
-mod segment_tree_nodes;
+mod segment_tree_node;
+mod fenwick;
 
 #[cfg(test)]
 mod tests {
+    use crate::fenwick::Fenwick;
     use crate::flow::max_flow;
     use crate::hungarian::hungarian;
     use crate::rmq::Rmq;
-    use crate::segment_tree_nodes::SegmentTree;
+    use crate::segment_tree_node::SegmentTree;
 
     #[test]
     fn test_hungarian() {
@@ -44,5 +46,13 @@ mod tests {
         assert_eq!(seg_tree.query(0, 9), 55);
         seg_tree.update(0, 11);
         assert_eq!(seg_tree.query(0, 9), 65);
+    }
+
+    #[test]
+    fn test_fenwick_tree() {
+        let mut fenwick = Fenwick::from(&[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], |a, b| a + b);
+        assert_eq!(fenwick.query(9), 55);
+        fenwick.update(0, 11);
+        assert_eq!(fenwick.query(9), 66);
     }
 }

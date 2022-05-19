@@ -39,7 +39,7 @@ impl SegmentTree {
     }
 
     pub fn query(&self, mut left: usize, mut right: usize) -> i64 {
-        let mut res = 0;
+        let mut res = 0; // Careful! Initialization may vay
 
         left += self.n;
         right += self.n + 1;
