@@ -67,13 +67,21 @@ struct Bit {
 }
 
 impl Bit {
-    fn new(n: i32) -> Self {
+    fn new(n: usize) -> Self {
         Bit { tree: vec![0; n as usize + 1] }
+    }
+
+    fn from(input: &[i32]) -> Self {
+        let mut bit = Self::new(input.len());
+        for i in 0..input.len() {
+            bit.add(i as i32, input[i])
+        }
+        bit
     }
 
     fn add(&mut self, mut pos: i32, val: i32) {
         pos += 1;
-        while pos <= self.tree.len() as i32 {
+        while pos < self.tree.len() as i32 {
             self.tree[pos as usize] += val;
             pos += pos & -pos;
         }
@@ -87,5 +95,9 @@ impl Bit {
             pos -= pos & -pos;
         }
         result
+    }
+
+    fn range_query(&self, left: i32, right: i32) -> i32 {
+        self.query(right) - self.query(left - 1)
     }
 }

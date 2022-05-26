@@ -1,53 +1,62 @@
-#![allow(dead_code)]
+#![allow(dead_code, unused)]
 
-use std::str::FromStr;
+mod io {
+    use std::str::{FromStr, SplitWhitespace};
 
-pub fn line() -> String {
-    let mut input = String::new();
-    std::io::stdin()
-        .read_line(&mut input)
-        .expect("Error reading from stdin");
-    input
-        .trim()
-        .to_string()
+    pub fn read_from_stdin() -> String {
+        use std::io::Read;
+        let mut input = String::new();
+
+        std::io::stdin()
+            .read_to_string(&mut input)
+            .expect("Error reading from stdin");
+        input
+            .trim()
+            .to_string()
+    }
+
+    pub struct Input<'a> {
+        values: SplitWhitespace<'a>
+    }
+
+    impl <'a> Input<'a> {
+        pub fn from(input: &'a str) -> Self {
+            Self { values: input.split_whitespace() }
+        }
+
+        pub fn next<T>(&mut self) -> T where T: FromStr {
+            self
+                .values
+                .next()
+                .unwrap()
+                .parse::<T>()
+                .ok()
+                .unwrap()
+        }
+
+        pub fn vec<T>(&mut self, n: usize) -> Vec<T> where T: FromStr {
+            (0..n)
+                .map(|_| self.next())
+                .collect()
+        }
+    }
 }
 
-fn val<T>() -> T
-    where T: FromStr {
-    line()
-        .parse::<T>()
-        .ok()
-        .unwrap()
-}
-
-fn vec<T>() -> Vec<T>
-    where T: FromStr {
-    line()
-        .split_whitespace()
-        .map(|x|
-            x.parse::<T>()
-            .ok()
-            .unwrap())
-        .collect()
-}
-
-fn arr<T, const N: usize>() -> [T; N]
-    where T: FromStr {
-    vec()
-        .try_into()
-        .ok()
-        .unwrap()
-}
-
-
-
-
+use std::io::{BufWriter, StdoutLock, Write};
+type Output<'a> = BufWriter<StdoutLock<'a>>;
 
 fn main() {
-    let k: usize = val();
-    for _ in 0..k { solve() }
+    let stdin = io::read_from_stdin();
+    let stdout = std::io::stdout();
+    let mut input = io::Input::from(&stdin);
+    let mut output = BufWriter::new(stdout.lock());
+    let k: usize = input.next();
+
+    for _ in 0..k {
+        solve(&mut input, &mut output)
+    }
 }
 
-fn solve() {
+fn solve(input: &mut io::Input, output: &mut Output) {
 
 }

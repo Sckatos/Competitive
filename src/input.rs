@@ -1,21 +1,41 @@
-mod input {
-    use std::str::FromStr;
+mod io {
+    use std::str::{FromStr, SplitWhitespace};
 
-    pub fn read() -> String {
+    pub fn read_from_stdin() -> String {
+        use std::io::Read;
         let mut input = String::new();
-        std::io::stdin().read_line(&mut input).expect("Error reading from stdin");
-        input.trim().to_string()
+
+        std::io::stdin()
+            .read_to_string(&mut input)
+            .expect("Error reading from stdin");
+        input
+            .trim()
+            .to_string()
     }
 
-    pub fn read_val<T: FromStr>() -> T {
-        read().parse::<T>().ok().unwrap()
+    pub struct Input<'a> {
+        values: SplitWhitespace<'a>
     }
 
-    pub fn read_vec<T: FromStr>() -> Vec<T> {
-        read().split_whitespace().map(|x| x.parse::<T>().ok().unwrap()).collect()
-    }
+    impl <'a> Input<'a> {
+        pub fn from(input: &'a str) -> Self {
+            Self { values: input.split_whitespace() }
+        }
 
-    pub fn read_array<T: FromStr, const N: usize>() -> [T; N] {
-        read_vec().try_into().ok().unwrap()
+        pub fn next<T>(&mut self) -> T where T: FromStr {
+            self
+                .values
+                .next()
+                .unwrap()
+                .parse::<T>()
+                .ok()
+                .unwrap()
+        }
+
+        pub fn vec<T>(&mut self, n: usize) -> Vec<T> where T: FromStr {
+            (0..n)
+                .map(|_| self.next())
+                .collect()
+        }
     }
 }
